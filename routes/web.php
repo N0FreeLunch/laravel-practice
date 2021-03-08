@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyController;
-use Customer\Profiling\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,7 +89,7 @@ foreach ($files as $partial) {
 
 Route::get('newpage', [MyController::class, 'returningASimplePage']);
 
-Route::get('index', [ProfileController::class, 'showIndex']);
+Route::get('profile', [\App\Http\Controllers\Customer\Profiling\ProfileController::class, 'getProfile']);
 
 
 
