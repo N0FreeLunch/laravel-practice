@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MyController;
+use Customer\Profiling\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,7 +79,19 @@ Route::get('hello/{name}', function ($name) {
 
 Route::any('any', function () {
   return "Anything is possble if you try hard!";
-});
+}) -> name('any');
+
+// dd(__DIR__);
+$path = __DIR__."/web";
+$files = File::allFiles($path,'/routes');
+foreach ($files as $partial) {
+  require_once $partial;
+}
+
+Route::get('newpage', [MyController::class, 'returningASimplePage']);
+
+Route::get('index', [ProfileController::class, 'showIndex']);
+
 
 
 Auth::routes();
