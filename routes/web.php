@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,7 +92,9 @@ Route::get('newpage', [MyController::class, 'returningASimplePage']);
 
 Route::get('profile', [\App\Http\Controllers\Customer\Profiling\ProfileController::class, 'getProfile']);
 
+Route::resource('user', UserController::class)->only(['index', 'show']);
 
+Route::get('get-user', [UserController::class, 'getUsers']);
 
 Auth::routes();
 
