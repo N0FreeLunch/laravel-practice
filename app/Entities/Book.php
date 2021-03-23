@@ -18,7 +18,7 @@ class Book
 
   public function getid():int
   {
-    return $this -> title;
+    return $this -> id;
   }
 
   public function getTitle():stirng
