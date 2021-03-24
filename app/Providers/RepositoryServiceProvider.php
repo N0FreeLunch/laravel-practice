@@ -13,10 +13,10 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this -> app -> bind(
-          'App\Repositories\User\UserDataAccessRepositoryInterface',
-          'App\Repositories\User\UserDataAccessQBRepository'
-        );
+        $this -> app -> bind('App\Repositories\User\UserDataAccessRepositoryInterface','App\Repositories\User\UserDataAccessQBRepository');
+        var_dump("test");
+        // \App\Repositories\User\UserDataAccessRepositoryInterface::class,
+        // \App\Repositories\User\UserDataAccessQBRepository::class
     }
 
     /**

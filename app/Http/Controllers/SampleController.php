@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Repositories\User\UserDataAccessRepositoryInterface as UserDataAccess;
+use App\Repositories\User\UserDataAccessRepositoryInterface AS UserDataAccess;
+// use App\Repositories\User\UserDataAccessQBRepository as UserDataAccess;
 
 class SampleController extends Controller
 {
@@ -20,12 +21,12 @@ class SampleController extends Controller
     $start = microtime(true);
     $memory = memory_get_usage();
 
-    $data = $this->User->getAll();
+    $data = $this -> User -> getAll();
 
     $result = [
       'name' => get_class($this -> User),
-      'time' => microtime(true) -> $start,
-      'momoery' => (memory_get_peak_usage() -> memory)/(1024*1024)
+      'time' => microtime(true) - $start,
+      'momoery' => (memory_get_peak_usage() - $memory)/(1024*1024)
     ];
 
     var_dump($result);

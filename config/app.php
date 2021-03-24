@@ -176,7 +176,6 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         // custom
-        // App\Providers\RepositoryServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
     ],
 
