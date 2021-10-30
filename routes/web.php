@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReceiptController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,8 @@ use App\Http\Controllers\UserController;
 Route::get('/', function () {
   return view('welcome');
 });
+
+Route::get('/pdftest', [ReceiptController::class, 'index']);
 
 Route::get('/text', function () {
   return "welcome";
