@@ -41,7 +41,7 @@ services:
 
 ### 변경된 docker compose
 ```yml
-version: '3.1'
+version: '3.9'
 
 services:
 
@@ -94,15 +94,66 @@ environment:
 environment:
     MYSQL_ALLOW_EMPTY_PASSWORD: qwer
 ```
-- 하지만 위와 같이 어떤 값이든 있다면 빈 비밀번호가 세팅된다. 보통 `yes`를 적어준다.
+- 하지만 위와 같이 어떤 값이든 있다면 비밀번호 없이 데이터베이스에 로그인 할 수 있따. 보통 `yes`를 적어준다.
 
 #### MYSQL_RANDOM_ROOT_PASSWORD
 - 데이터베이스 생성시 root 유저의 초기 비밀번호를 자동생성하기 위해서 사용한다.
 - 자동생성된 비밀번호는 도커 로그를 통해서 확인할 수 있다.
+```yml
+environment:
+    MYSQL_RANDOM_ROOT_PASSWORD:
+```
+- 위와 같이 비어 있다면 비밀번호가 발급되지 않는다.
+```yml
+environment:
+    MYSQL_RANDOM_ROOT_PASSWORD: asdf
+```
+- 하지만 위와 같이 어떤 값이든 있다면 자동으로 비밀번호가 발급된다. 보통 `yes`를 적어준다.
 
 #### MYSQL_ONETIME_PASSWORD
 - 첫번째 로그인과 동시에 비밀번호를 변경하라는 요구가 나오도록 한다.
+```yml
+environment:
+    MYSQL_ONETIME_PASSWORD:
+```
+- 위와 같이 비어 있다면 데이터베이스에 처음 로그인을 하더라도 비밀번호를 바꾸라는 요구사항이 나오지 않는다.
+```yml
+environment:
+    MYSQL_ONETIME_PASSWORD: 1q2w
+```
+- 하지만 위와 같이 어떤 값이든 있다면 처음 로그인을 할 때 비밀번호를 바꾸라는 요구사항이 나온다. 비밀번호를 바꿀 때 까지 계속 요구사항을 표시한다. 보통 `yes`를 적어준다.
 
 #### MYSQL_INITDB_SKIP_TZINFO
 - 처음 MySql이 설치될 때 자동으로 타임존이 세팅되며, OS의 타임존을 기준으로 설정된다. 도커의 경우 도커가 동작하는 리눅스에 기본 세팅된 타임존을 기준으로 시간이 저장된다.
 - 이 옵션은 타임존 세팅을 하지 않으며, 그리니치 평균시를 사용하게 된다. 한국 시간은 이 시간을 기준으로 +9시간이 된다.
+```yml
+environment:
+    MYSQL_INITDB_SKIP_TZINFO:
+```
+- 위와 같이 비어 있다면 
+
+```yml
+environment:
+    MYSQL_INITDB_SKIP_TZINFO: zxcv
+```
+
+### 최종 도커 세팅
+```yml
+version: '3.9'
+
+services:
+
+  db:
+    image: mysql
+    command: --default-authentication-plugin=caching_sha2_password
+    restart: always
+    ports:
+      - ${DB_PORT}:3306
+    environment:
+      MYSQL_DATABASE: $DB_DATABASE
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+      MYSQL_USER: $DB_USERNAME
+      MYSQL_PASSWORD: $DB_PASSWORD
+```
+- `$DB_PASSWORD`를 `DB_ROOT_PASSWORD`로 바꾸고 `.env`에 `DB_ROOT_PASSWORD` 환경 변수 값을 세팅해 준다.
+- 라라벨의 디폴트 `.env`는 `DB_USERNAME=root`와 `DB_PASSWORD=root`이다. `DB_USERNAME=user`, `DB_PASSWORD=********`으로 바꾸자.
