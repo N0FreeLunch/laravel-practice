@@ -61,3 +61,48 @@ services:
 ### 접속
 - MySql의 디폴트 데이터베이스명은 `mysql`이다. 따라서 `.env` 파일의 `DB_DATABASE=` 부분을 `mysql`로 설정한다.
 - 라라벨에서 데이터 베이스 접속을 확인하기 위해서는 `php artisan tinker` 명령으로 커멘드라인에서 프로그래밍 언어를 실행할 수 있는 프로그램을 실행한다. 그 후 `\DB::connection()->getPdo();`를 입력해서 PDO 객체를 에러 없이 가져오는지 확인하는 것으로 데이터베이스 커넥션을 확인할 수 있다.
+
+### 여러가지 옵션
+- MySql 도커의 [공식문서](https://hub.docker.com/_/mysql)를 보면, 'Environment Variables'라는 항목이 있다.
+
+#### MYSQL_DATABASE
+- 생성되는 데이터베이스의 이름을 지정할 수 있다. 이 값을 지정하지 않으면 데이터베이스 이름은 `mysql`이 된다.
+```yml
+environment:
+    MYSQL_DATABASE: $DB_DATABASE
+```
+
+#### MYSQL_USER, MYSQL_PASSWORD
+```yml
+environment:
+    MYSQL_USER: $DB_USERNAME
+    MYSQL_PASSWORD: $DB_PASSWORD
+```
+- 기본적으로 데이터베이스가 생성될 때, root라는 데이터베이스 계정이 생기고 root 계정으로 데이터베이스 콘솔에 접근 할 수 있다.
+- 하지만, root는 데이터베이스을 다루는데에 있어 모든 권한을 갖고 있기 때문에 새로운 유저를 만들어서 권한을 제한하여 데이터베이스를 치명적인 조작으로부터 보호하는 것이 필요하다. 물론 `MYSQL_USER`으로 새로운 유저를 생성하더라도, 기본적으로는 최대 권한을 갖고 있기 때문에 별도의 유저 기능 제한을 추가해 줘야 한다.
+- 제한된 계정으로는 데이터베이스 관련 설정 중에 잘못된 설정으로 인해 원 상태로 돌아갈 수 없는 경우가 생길 수 있다. 이런 경우를 대비하여 모든 권한을 가진 root 계정을 두고 권한이 제한되는 새로운 계정을 하나 만들어 사용한다.
+
+#### MYSQL_ALLOW_EMPTY_PASSWORD
+- root 사용자의 비밀번호를 설정하지 않을 때 사용한다.
+- 연습용이 아닌 실사용이라면 절대 사용하면 안 되는 옵션이다.
+```yml
+environment:
+    MYSQL_ALLOW_EMPTY_PASSWORD: 
+```
+- 위와 같이 빈 값이면 빈 비밀번호가 생성되지 않는다.
+```yml
+environment:
+    MYSQL_ALLOW_EMPTY_PASSWORD: qwer
+```
+- 하지만 위와 같이 어떤 값이든 있다면 빈 비밀번호가 세팅된다. 보통 `yes`를 적어준다.
+
+#### MYSQL_RANDOM_ROOT_PASSWORD
+- 데이터베이스 생성시 root 유저의 초기 비밀번호를 자동생성하기 위해서 사용한다.
+- 자동생성된 비밀번호는 도커 로그를 통해서 확인할 수 있다.
+
+#### MYSQL_ONETIME_PASSWORD
+- 첫번째 로그인과 동시에 비밀번호를 변경하라는 요구가 나오도록 한다.
+
+#### MYSQL_INITDB_SKIP_TZINFO
+- 처음 MySql이 설치될 때 자동으로 타임존이 세팅되며, OS의 타임존을 기준으로 설정된다. 도커의 경우 도커가 동작하는 리눅스에 기본 세팅된 타임존을 기준으로 시간이 저장된다.
+- 이 옵션은 타임존 세팅을 하지 않으며, 그리니치 평균시를 사용하게 된다. 한국 시간은 이 시간을 기준으로 +9시간이 된다.
