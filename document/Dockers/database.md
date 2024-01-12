@@ -157,3 +157,10 @@ services:
 ```
 - `$DB_PASSWORD`를 `DB_ROOT_PASSWORD`로 바꾸고 `.env`에 `DB_ROOT_PASSWORD` 환경 변수 값을 세팅해 준다.
 - 라라벨의 디폴트 `.env`는 `DB_USERNAME=root`와 `DB_PASSWORD=root`이다. `DB_USERNAME=user`, `DB_PASSWORD=********`으로 바꾸자.
+
+### 데이터베이스에 접근할 수 없을 때
+```
+php artisan config:cache
+```
+- 변경한 환경 변수가 반영이 안 되는 경우가 있다.
+- 이 경우에는 위 명령어를 사용하여 환경변수를 재설정하도록 하자.
