@@ -77,3 +77,6 @@ $temperature = new Temperature($service);
 $this->assertEquals(12, $temperature->average());
 ```
 - `$service`라는 객체를 주입했을 때 `Temperature` 객체는 내부에서 `$service` 객체의 `readTemp` 메소드를 3번 호출하고 그 평균을 구하도록 한다. 그래서 10, 12, 14의 평균이 12 이므로 `$temperature->average()`의 값은 12가 된다.
+
+## Reference
+- https://docs.mockery.io/en/stable/getting_started/simple_example.html
