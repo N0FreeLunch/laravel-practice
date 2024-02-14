@@ -1,6 +1,6 @@
 <?php
 /**
- * php artisan test tests/Unit/TemperatureTest.php
+ * php artisan test tests/Mockery/TemperatureTest.php
  */
 
 use \PHPUnit\Framework\TestCase;
