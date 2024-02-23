@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\Api\HelloWorldController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,4 +108,8 @@ Route::group(['prefix' => 'home'], function () {
   Route::get('/',[HomeController::class, 'Showindex']);
   Route::get('/about',[HomeController::class,'About']);
   Route::get('/contact', [HomeController::class, 'showContact']);
+});
+
+Route::group(['prefix' => 'api'], function () {
+    Route::get('/home',[HelloWorldController::class, 'index']);
 });
