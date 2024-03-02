@@ -41,5 +41,37 @@ axios.get('/sanctum/csrf-cookie').then(response => {
 
 ### CORS 문제
 - 일반적으로 SPA 서버를 구축하게 되면, 수정 후 브라우저에 즉각 수정 사항이 적용되는 HMR 핫 모듈 리플레이스 등의 이점을 위해서 webpack이나 vite가 만든 로컬 서버 환경을 사용하게 된다.
-- 그리고 webpack이나 vite는 잘 구성된 SPA 개발 구성을 제공하기 때문에 많은 커스텀 없이 기본적으로 제공하는 개발 구성을 사용하는 편이 여러 모로 편리하다. 그러나 이 구성을 이용하려면 로컬 서버에서 실행되기 때문에 라라벨 서버와의 도메인이 달라지는 문제가 생긴다.
-- SPA 개발 로컬 서버와 라라벨 서버의 도메인이 달라지면서 CORS 문제가 생긴다. 이를 해결해 주기 위해서 SPA 개발 환경의 로컬 서버를 라라벨의 CORS를 할 수 있게 해 주어야 한다.
+- 그리고 webpack이나 vite는 잘 구성된 SPA 개발 구성을 제공하기 때문에 많은 커스텀 없이 기본적으로 제공하는 개발 구성을 사용하는 편이 여러 모로 편리하다. 그러나 이 구성을 이용하려면 로컬 서버에서 실행되기 때문에 라라벨 서버와의 포트가 달라지는 문제가 생긴다.
+- SPA 개발 로컬 서버와 라라벨 서버의 포트가 달라지면서 CORS 문제가 생긴다. 이를 해결해 주기 위해서 SPA 개발 환경의 로컬 서버를 라라벨의 CORS를 할 수 있게 해 주어야 한다.
+
+#### CORS란?
+- CORS는 브라우저에서 동작하는 기능이다. 브라우저가 열린 페이지의 도메인, 프로토콜, 포트와 어느 하나라도 다른 주소에 리퀘스트를 보냈을 때 서버의 리스폰스를 받더라도 브라우저가 해당 리스폰스를 처리할 수 없도록 차단하는 것을 의미한다.
+- 예를 들어 도메인A의 웹 페이지에서 도메인B의 서버로 API 통신을 한 경우, 도메인B의 서버에서 도메인A의 웹 페이지에 리스폰스를 전달하더라도 이 리스폰스에 대한 접근이 차단되고 브라우저 콘솔에는 CORS로 문제가 있으니 서버에서 이를 허용하는 헤더(`Access-Control-Allow-Origin`)를 보내야한다는 메시지가 나온다.
+- CORS는 브라우저가 차단하는 기능이므로 브라우저가 아닌 쪽에서 리퀘스트를 전송하는 경우 CORS 차단 기능이 없기 때문에 `Access-Control-Allow-Origin` 헤더가 없어도 통신이 가능하다.
+
+#### 라라벨에서 CORS 허용
+- 라라벨에서 CORS를 허용하기 위해서는 다음의 설정을 추가 해 주어야 한다.
+```
+php artisan make:middleware Cors
+```
+- 먼저 미들웨어를 CORS를 위한 미들웨어를 만든다. 그리고 다음과 같이 코드를 작성한다.
+
+```php
+public function handle(Request $request, Closure $next)
+{
+    if(env('APP_ENV') !== 'local') return $next($request);
+    /**
+        * @see https://stackoverflow.com/a/52052343
+        */
+    $allowedOrigins = ['localhost:5173'];
+    $origin = $request->server('HTTP_ORIGIN');
+    $originWithoutProtocol = str_replace(['http://', 'https://'], '', $origin);
+
+    if (in_array($originWithoutProtocol, $allowedOrigins, true)) {
+        return $next($request)
+            ->header('Access-Control-Allow-Origin', '*');
+    }
+    return $next($request);
+}
+```
+- 위의 미들웨어를 WEB 또는 API 미들웨어 그룹에 등록한다.
