@@ -1,4 +1,4 @@
-## average
+## average, avg
 > The avg method returns the average value of a given key:
 - 주어진 키에 대응하는 값의 평균을 반환한다.
 
