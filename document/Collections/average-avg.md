@@ -2,8 +2,13 @@
 > The avg method returns the average value of a given key:
 - 주어진 키에 대응하는 값의 평균을 반환한다.
 
-### 설명
-- 반환 값은 
+### 문법
+```
+@param  (callable(TValue): float|int)|string|null  $callback
+@return float|int|null
+```
+- `float|int|null` 반환값은 수에 해당하는 값 또는 null이다. null이 반환되는 경우는 평균값을 계산할 수 없는 경우이다.
+- `(callable(TValue): float|int)|string|null` 콜백함수는 임의의 타입을 지정할 수 있으며, 콜백 함수의 반환값은 수(int형, float형)을 반환한다. 문자열을 할당할 때는 컬렉션 원소의 키가 가진 값에 접근한다.
 
 ### 기본 예제코드
 ```php
@@ -65,6 +70,18 @@ $average = collect([
 ```
 - 위와 같이 null을 반환하면 해당 원소를 계산에 포함하지 않는다.
 
+#### 결과값이 null인 경우
+```php
+$average = collect([
+    ['foo' => 10],
+    ['foo' => 10],
+    ['foo' => 20],
+    ['foo' => 40]
+])->avg('bar');
+```
+- 평균값을 계산할 수 있는 대상 원소가 없기 때문에 처리되지 않았다는 의미에서 null이 반환 되었다.
+
 ## Reference
 - https://laravel.com/docs/11.x/collections#method-average
-- https://laravel.com/api/11.x/Illuminate/Support/Collection.html#method_average
+- https://laravel.com/api/11.x/Illuminate/Support/Collection.html#method_avg
+- https://github.com/laravel/framework/blob/11.x/src/Illuminate/Collections/Collection.php
