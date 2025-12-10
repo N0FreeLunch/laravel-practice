@@ -32,10 +32,10 @@ it('사용자가 유효한 이메일을 제공하면 저장되어야 한다', fu
     $this->assertDatabaseHas('users', ['email' => 'valid.email@example.com']);
 });
 ```
-- `$user = User::factory()->make([ ... ])`: [Given/Arrange] 준비: Model Factory를 사용하여 테스트에 필요한 객체 생성
-- `$isSaved = $user->save();`: [When/Act] 실행: 실제로 테스트하려는 행위 수행
-- `expect($isSaved)->toBeTrue();`: 저장에 성공했는지 검증
-- `$this->assertDatabaseHas('users', ['email' => 'valid.email@example.com']) `: // DB에 실제로 저장되었는지 검증
+- `$user = User::factory()->make([ ... ])`: [Given/Arrange 준비] Model Factory를 사용하여 테스트에 필요한 객체 생성
+- `$isSaved = $user->save();`: [When/Act 실행] 실제로 테스트하려는 행위 수행
+- `expect($isSaved)->toBeTrue();`: [Assert/Then 검증] 저장에 성공했는지 검증
+- `$this->assertDatabaseHas('users', ['email' => 'valid.email@example.com']) `: [Assert/Then 검증] DB에 실제로 저장되었는지 검증
 
 ## 참고: model factory 사용법
 
