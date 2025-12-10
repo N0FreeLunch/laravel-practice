@@ -44,6 +44,6 @@ it을 기반으로 Test Closure의 테스트에서 모든 expect가 성공이면
 expect($value)
     ->toBeInt()
     ->toBe(3)
-    ->not->toBeString() // Not to be string...
-    ->not->toBe(4); // Not to be 4...
+    ->not->toBeString()
+    ->not->toBe(4);
 ```
