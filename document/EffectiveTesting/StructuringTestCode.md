@@ -8,9 +8,9 @@
 
 테스트 목록은 비즈니스에서 요구하는 조건들을 만족해야 하며, 시스템을 통해 동작시키려는 움직임의 흐름을 제공해야 한다.
 
-### 구조화 하기
+## 구조화 하기
 
-#### Grouping
+### Grouping
 
 describe()와 context()를 사용하여 테스트 항목들을 그룹화 할 수 있다.
 
@@ -38,7 +38,7 @@ describe('Calculator', function () {
 });
 ```
 
-#### Setup
+### Setup
 
 테스트 항목의 로직을 성립하는데 있어서 공통적으로 사용할 수 있는 부분이 있다면 공통적으로 동일하게 적용할 수 있는 선행 조건을 세팅할 필요가 있다.
 
@@ -110,6 +110,72 @@ describe('쇼핑몰', function () {
 });
 ```
 
-#### dataset
+### dataset
 
-하나의 테스트 로직으로 데이터를 기반으로 한 여러 테스트 케이스를 검증하는 방법을 사용한다.
+하나의 테스트 항목으로 여러 데이터를 전달하여 동작의 성립 여부를 테스트한다.
+
+#### 하나의 테스트 항목에 데이터셋 전달하기
+
+```php
+it('1+1은 2다', function() { expect(1+1)->toBe(2); });
+it('1+2는 3이다', function() { expect(1+2)->toBe(3); });
+```
+
+동일한 테스트 로직에 대해, 테스트 항목을 따로 만들면 추후 동일한 테스트 코드를 중복으로 수정해야 하는 경우가 생긴다.
+
+또한 검증해야 할 데이터 셋이 많아지면 많아질수록 테스트 항목이 늘어나기 때문에 다음과 같이 with를 사용하여 데이터 셋을 전달하여 동일 테스트 항목을 재사용하는 방법을 사용할 수 있다.
+
+```php
+it('두 수를 더하면 합계를 반환', function ($a, $b, $expected) {
+    expect($a + $b)->toBe($expected);
+})->with([
+    [1, 1, 2],
+    [1, 2, 3],
+    [2, 3, 5],
+]);
+```
+
+#### 테스트 셋 연관배열 키로 이름 부여하기
+
+pest는 연관 배열의 키를 실패 메시지에 표시하는 것으로 어떤 데이터에서 실패했는지 알려 준다.
+
+```php
+it('유효한 이메일인지 확인', function ($email) {
+    expect(Validator::validate($email))->toBeFalse();
+})->with([
+    '빈 문자열' => '',
+    '도메인 누락' => 'user@',
+    '특수문자 포함' => 'user!@Example.com',
+]);
+```
+
+#### 데이터 셋을 외부 요소 분리하기
+
+동일 데이터 셋을 여러 테스트 항목에서 테스트하는 경우, 데이터셋을 별도로 분리할 수 있다.
+
+tests/Datasets/Emails.php
+
+```php
+dataset('invalid_emails', [
+    'missing_at' => 'userexample.com',
+    'missing_domain' => 'user@',
+]);
+```
+
+tests/Feature/AuthTest.php
+```php
+it('잘못된 이메일로 가입할 수 없다', function ($email) {
+    // ...
+})->with('invalid_emails'); // 이름으로 불러와서 사용
+```
+
+#### 조합
+
+두 개 이상의 데이터 셋을 전달하여 테스트 데이터 케이스를 조합한 경우의 수의 테스트 데이터를 테스트 할 수 있다.
+
+```php
+it('쿠폰을 적용하여 결제한다', function ($tier, $coupon) {
+    // ...
+})->with(['Gold', 'Silver', 'Bronze'])
+  ->with(['Discount', 'FreeShipping']);
+```
