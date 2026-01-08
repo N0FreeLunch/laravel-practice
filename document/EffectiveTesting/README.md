@@ -5,3 +5,4 @@
 - [Feature and Unit test](./FeatureAndUnitTest.md)
 - [Outside in Flow](./OutsideInFlow.md)
 - [Test Double](./TestDoubles.md)
+- [StructuringTestCode](./StructuringTestCode.md)
