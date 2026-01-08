@@ -40,7 +40,73 @@ describe('Calculator', function () {
 
 #### Setup
 
-beforeEach()를 사용하여 테스트 검증할 테스트 대상의 선행 조건을 미리 설정 실행할 수 있다.
+테스트 항목의 로직을 성립하는데 있어서 공통적으로 사용할 수 있는 부분이 있다면 공통적으로 동일하게 적용할 수 있는 선행 조건을 세팅할 필요가 있다.
+
+beforeEach를 사용하면 각 테스트 항목이 동작하기 전에 필요한 선행 조건(미리 로딩해야 하는 코드나 데이터)을 세팅 할 수 있다.
+
+중요한 것은, beforeEach로 각각의 그룹핑 단위에서 공통의 선행 조건을 세팅할 수 있다는 것이다.
+
+다음의 예시는 관리자 데이터 생성인데, 테스트를 하기에 앞서 동일한 데이터를 생성해야 한다. 각각의 테스트 항목 (it 함수 각각)에 각각 이 조건을 세팅하는 것 보다는, 테스트가 돌아갈 때 공통적인 부분이므로 공통적인 코드를 작성하도록 한다.
+
+```php
+describe('관리자 대시보드', function () {
+    it('접속 성공', function () {
+        $admin = User::factory()->create(['is_admin' => true]); 
+        
+        $this->actingAs($admin)->get('/admin')->assertOk();
+    });
+
+    it('통계 데이터 확인', function () {
+        $admin = User::factory()->create(['is_admin' => true]);
+        
+        $this->actingAs($admin)->get('/admin/stats')->assertOk();
+    });
+});
+```
+
+```php
+describe('관리자 대시보드', function () {
+    beforeEach(function () {
+        $this->admin = User::factory()->create(['is_admin' => true]);
+    });
+
+    it('접속 성공', function () {
+        $this->actingAs($this->admin)->get('/admin')->assertOk();
+    });
+
+    it('통계 데이터 확인', function () {
+        $this->actingAs($this->admin)->get('/admin/stats')->assertOk();
+    });
+});
+```
+
+describe 블록 뿐 아니라 중첩된 구조에서도 다음과 같이 사용할 수 있다.
+
+```php
+describe('쇼핑몰', function () {
+    beforeEach(function () {
+        $this->shop = Shop::create();
+    });
+
+    context('로그인한 사용자', function () {
+        beforeEach(function () {
+            $this->user = User::factory()->create();
+            $this->actingAs($this->user);
+        });
+
+        context('장바구니에 상품이 있을 때', function () {
+            beforeEach(function () {
+                $this->product = Product::factory()->create();
+                $this->cart->add($this->product);
+            });
+
+            it('결제 화면으로 이동한다', function () {
+                get('/checkout')->assertOk();
+            });
+        });
+    });
+});
+```
 
 #### dataset
 
